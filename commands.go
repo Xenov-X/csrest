@@ -104,3 +104,34 @@ func readAndEncodeFile(filePath string) (string, error) {
 	}
 	return base64.StdEncoding.EncodeToString(data), nil
 }
+
+// ExecuteConsoleCommand executes a console command on the beacon
+// This allows running any Cobalt Strike console command with arguments and file references
+func (c *Client) ExecuteConsoleCommand(ctx context.Context, bid string, cmd CommandDto) (*AsyncCommandResponse, error) {
+	var resp AsyncCommandResponse
+	path := fmt.Sprintf("/api/v1/beacons/%s/consoleCommand", bid)
+	if err := c.doRequest(ctx, "POST", path, cmd, &resp, true); err != nil {
+		return nil, fmt.Errorf("failed to execute console command: %w", err)
+	}
+	return &resp, nil
+}
+
+// ListCommandHelp retrieves help for all available console commands
+func (c *Client) ListCommandHelp(ctx context.Context, bid string) ([]CommandHelpInfoDto, error) {
+	var helpList []CommandHelpInfoDto
+	path := fmt.Sprintf("/api/v1/beacons/%s/help", bid)
+	if err := c.doRequest(ctx, "GET", path, nil, &helpList, true); err != nil {
+		return nil, fmt.Errorf("failed to list command help: %w", err)
+	}
+	return helpList, nil
+}
+
+// GetCommandHelp retrieves help for a specific console command
+func (c *Client) GetCommandHelp(ctx context.Context, bid string, command string) (*CommandHelpInfoDto, error) {
+	var help CommandHelpInfoDto
+	path := fmt.Sprintf("/api/v1/beacons/%s/help/%s", bid, command)
+	if err := c.doRequest(ctx, "GET", path, nil, &help, true); err != nil {
+		return nil, fmt.Errorf("failed to get command help: %w", err)
+	}
+	return &help, nil
+}

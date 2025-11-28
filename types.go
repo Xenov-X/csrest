@@ -194,5 +194,20 @@ type UploadDto struct {
 	Files map[string]string `json:"files,omitempty"` // Map of filename -> base64 content
 }
 
+// CommandDto represents a console command to execute
+type CommandDto struct {
+	Command   string            `json:"command"`             // Required: Command to execute
+	Arguments string            `json:"arguments,omitempty"` // Optional: Arguments with @files or @artifacts references
+	Files     map[string]string `json:"files,omitempty"`     // Optional: Map of filename -> base64 content for @files references
+}
+
+// CommandHelpInfoDto represents help information for a command
+type CommandHelpInfoDto struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Details     string   `json:"details"`
+	Groups      []string `json:"groups"`
+}
+
 // EmptyDto represents an empty request body
 type EmptyDto struct{}
