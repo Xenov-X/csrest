@@ -65,9 +65,6 @@ func (c *Client) WaitForTaskCompletion(ctx context.Context, taskID string, timeo
 				return nil, err
 			}
 
-			// Log current task status for debugging
-			fmt.Printf("[CSREST DEBUG] Task %s status: %s, command: %s\n", taskID, task.TaskStatus, task.TaskCommand)
-
 			if task.TaskStatus == TaskStatusCompleted ||
 			   task.TaskStatus == TaskStatusOutputReceived ||
 			   task.TaskStatus == TaskStatusFailed {
