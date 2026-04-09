@@ -196,3 +196,61 @@ type UploadDto struct {
 
 // EmptyDto represents an empty request body
 type EmptyDto struct{}
+
+// --- File & Directory Operation DTOs ---
+
+// CdDto represents a change directory request
+type CdDto struct {
+	Path string `json:"path"`
+}
+
+// LsDto represents a list directory request
+type LsDto struct {
+	Path string `json:"path,omitempty"`
+}
+
+// MkdirDto represents a create directory request
+type MkdirDto struct {
+	Folder string `json:"folder"`
+}
+
+// CpDto represents a copy file request
+type CpDto struct {
+	Src string `json:"src"`
+	Dst string `json:"dst"`
+}
+
+// MoveDto represents a move/rename file request
+type MoveDto struct {
+	Source      string `json:"source"`
+	Destination string `json:"destination"`
+}
+
+// RmDto represents a remove file/folder request
+type RmDto struct {
+	Path string `json:"path"`
+}
+
+// TimeStompDto represents a timestomp request
+type TimeStompDto struct {
+	Source      string `json:"source"`
+	Destination string `json:"destination"`
+}
+
+// --- Process Management DTOs ---
+
+// KillDto represents a kill process request
+type KillDto struct {
+	PID int `json:"pid"`
+}
+
+// SetEnvDto represents a set environment variable request
+type SetEnvDto struct {
+	Key   string `json:"key"`
+	Value string `json:"value,omitempty"`
+}
+
+// JobKillDto represents a stop job request
+type JobKillDto struct {
+	JID int `json:"jid"`
+}
