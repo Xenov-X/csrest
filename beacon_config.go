@@ -397,25 +397,7 @@ func (c *Client) ConsoleCommand(ctx context.Context, bid string, command, argume
 	return &resp, nil
 }
 
-// ListCommandHelp retrieves help for all beacon commands
-func (c *Client) ListCommandHelp(ctx context.Context, bid string) ([]map[string]interface{}, error) {
-	var resp []map[string]interface{}
-	endpoint := fmt.Sprintf("/api/v1/beacons/%s/help", bid)
-	if err := c.doRequest(ctx, "GET", endpoint, nil, &resp, true); err != nil {
-		return nil, fmt.Errorf("failed to list command help: %w", err)
-	}
-	return resp, nil
-}
-
-// GetCommandHelp retrieves help for a specific beacon command
-func (c *Client) GetCommandHelp(ctx context.Context, bid string, command string) (map[string]interface{}, error) {
-	var resp map[string]interface{}
-	endpoint := fmt.Sprintf("/api/v1/beacons/%s/help/%s", bid, command)
-	if err := c.doRequest(ctx, "GET", endpoint, nil, &resp, true); err != nil {
-		return nil, fmt.Errorf("failed to get command help: %w", err)
-	}
-	return resp, nil
-}
+// NOTE: ListCommandHelp and GetCommandHelp are defined in commands.go (from main branch)
 
 // ============================================================
 // Jobs and Tasks Methods
