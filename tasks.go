@@ -45,6 +45,41 @@ func (c *Client) GetBeaconTasksDetail(ctx context.Context, bid string) ([]TaskDe
 	return tasks, nil
 }
 
+// WaitForTaskAck polls a task briefly to see if it completes quickly.
+// If the task transitions to a terminal state (COMPLETED/OUTPUT_RECEIVED/FAILED) within
+// the timeout, it returns that result. If the task stays IN_PROGRESS after the timeout,
+// it returns the last known task state with a nil error (fire-and-forget acknowledgment).
+// This is designed for commands that may never produce output (e.g., mkdir, cd, sleep, etc.).
+func (c *Client) WaitForTaskAck(ctx context.Context, taskID string, timeout time.Duration) (*TaskDetailDto, error) {
+	deadline := time.Now().Add(timeout)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-ticker.C:
+			task, err := c.GetTask(ctx, taskID)
+			if err != nil {
+				return nil, err
+			}
+
+			// If terminal state, return immediately
+			if task.TaskStatus == TaskStatusCompleted ||
+				task.TaskStatus == TaskStatusOutputReceived ||
+				task.TaskStatus == TaskStatusFailed {
+				return task, nil
+			}
+
+			// If past deadline and still IN_PROGRESS, treat as acknowledged
+			if time.Now().After(deadline) {
+				return task, nil
+			}
+		}
+	}
+}
+
 // WaitForTaskCompletion polls a task until it completes or times out
 func (c *Client) WaitForTaskCompletion(ctx context.Context, taskID string, timeout time.Duration) (*TaskDetailDto, error) {
 	deadline := time.Now().Add(timeout)
