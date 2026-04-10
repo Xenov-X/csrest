@@ -158,7 +158,11 @@ func (c *Client) doRequestOnce(ctx context.Context, method, path string, body in
 	}
 
 	if result != nil && len(respBody) > 0 {
-		if err := json.Unmarshal(respBody, result); err != nil {
+		// If the caller passed a *string, store the raw response body as-is
+		// (some API endpoints return plain text, not JSON)
+		if strPtr, ok := result.(*string); ok {
+			*strPtr = string(respBody)
+		} else if err := json.Unmarshal(respBody, result); err != nil {
 			return &APIError{
 				StatusCode: resp.StatusCode,
 				Message:    fmt.Sprintf("failed to unmarshal response: %v", err),
